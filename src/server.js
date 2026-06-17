@@ -1,26 +1,54 @@
 
+// eslint-disable no-console
 import express from 'express'
-import { mapOrder } from '~/utils/sorts.js'
+import exitHook from 'async-exit-hook'
+import { env } from '~/config/environment'
+import { CONNECT_DB, GET_DB, CLOSE_DB } from '~/config/mongodb'
 
-const app = express()
+const START_SERVER = () => {
+  const app = express()
 
-const hostname = 'localhost'
-const port = 8017
+  app.get('/', async (req, res) => {
 
-app.get('/', (req, res) => {
-  console.log(mapOrder(
-    [{ id: 'id-1', name: 'One' },
-    { id: 'id-2', name: 'Two' },
-    { id: 'id-3', name: 'Three' },
-    { id: 'id-4', name: 'Four' },
-    { id: 'id-5', name: 'Five' }],
-    ['id-5', 'id-4', 'id-2', 'id-3', 'id-1'],
-    'id'
-  ))
-  res.end('<h1>Hello World TanVoPY !</h1><hr>')
-})
+    res.end('<h1>Hello World TanVoPY !</h1><hr>')
+  })
 
-app.listen(port, hostname, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Hello Vo Xuan Tan, I am running at ${hostname}:${port}/`)
-})
+  app.listen(env.APP_PORT, env.APP_HOST, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Hello ${env.AUTHOR}, I am running at ${env.APP_HOST}:${env.APP_PORT}/`)
+  })
+
+  // thực hiện các tác vụ clearn up trước khi dừng server lại
+  exitHook(() => {
+    console.log('4 .disconnecting from mongodb cloud alat...')
+    CLOSE_DB()
+    console.log('5 .disconnected from mongodb cloud alat...')
+  })
+}
+
+// cách kết nối khác dùng try catch
+// IIFE (Immediately Invoked Function Expression) là một hàm được định nghĩa và
+// thực thi ngay lập tức sau khi nó được tạo ra. Cú pháp của IIFE thường là một 
+// hàm ẩn danh được bao quanh bởi dấu ngoặc đơn, và sau đó được gọi ngay sau đó bằng cách
+// thêm cặp dấu ngoặc đơn ở cuối.
+(async () => {
+  try {
+    console.log('1. connecting to mogodb...')
+    await CONNECT_DB()
+    console.log('2. connected to mongodb successfully')
+    START_SERVER()
+  } catch (error) {
+    console.error(error)
+    process.exit(0)
+  }
+})() // tác dụng cảu cập ngoạc nhon thứ 2 là để nó thực thi luôn cái funcion async
+
+// connect_db là 1 async function nên nó sẽ trả về 1 promise
+// chỉ khi kết nối database thành công thì mới start server lên
+// CONNECT_DB()
+//   .then(() => console.log('connected to mongodb successfully'))
+//   .then(() => START_SERVER())
+//   .catch(error => {
+//     console.error(error)
+//     process.exit(0) // dừng server lại nếu có lỗi xảy ra trong quá trình kết nối đến mongodb
+//   }) 
