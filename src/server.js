@@ -9,6 +9,9 @@ import { APIs_V1 } from '~/routes/v1'
 const START_SERVER = () => {
   const app = express()
 
+  // phải có 
+  app.use(express.json()) // middleware để parse dữ liệu json từ client gửi lên
+
   app.use('/v1', APIs_V1)
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
