@@ -25,9 +25,10 @@ const createNew = async (req, res, next) => {
     // abortEarly: false để biết hành động vaditation có dừng xớm hay không ; mặc định là true
     // ví dụ nếu title bị lôi nó sẽ trả về lỗi trước để sữa sau đó tới những trường khắc, 
     await corretCondition.validateAsync(req.body, { abortEarly: false })// kiẻm tra dữ liệu từ client gửi lên có hợp lệ theo đièu kiện mà ta cho  hay không, nếu không hợp lệ sẽ trả về lỗi và dừng thực thi
-    // next() // đưa dữ liệu sang tầng khác để tiếp tục xử lý middlware hoặc controller
+    next() // đưa dữ liệu sang tầng khác để tiếp tục xử lý middlware hoặc controller
+    // next bản thân nó là 1 request hợp lệ không bị lỗi để đi đến tầng tiếp theo
 
-    res.status(StatusCodes.CREATED).json({ message: 'Post from validation api create new board' })
+    // res.status(StatusCodes.CREATED).json({ message: 'Post from validation api create new board' })
   } catch (error) {
     console.log(error)
     res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ error: new Error(error).message })
