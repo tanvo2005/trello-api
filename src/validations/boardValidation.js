@@ -1,5 +1,6 @@
 import joi, { required } from 'joi'
 import { StatusCodes } from 'http-status-codes'
+import ApiError from '~/utils/ApiError'
 /**
  * validate là bắc buộc ở phía backend vì đây lad điểm cuối để lưu trữ dữ liệu vào database
  * thông thường trong thực tế luôn validate ở cả 2 phía backend và frontend
@@ -30,8 +31,10 @@ const createNew = async (req, res, next) => {
 
     // res.status(StatusCodes.CREATED).json({ message: 'Post from validation api create new board' })
   } catch (error) {
-    console.log(error)
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ error: new Error(error).message })
+    const errorMessage = new Error(error).message
+    const customError = new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage)
+    next(customError)
+    // res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ error: new Error(error).message })
     // UNPROCESSABLE_ENTITY trả vè mã 422 là thực thể dữ liệu không thể thực thi được
   }
 
