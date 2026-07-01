@@ -2,6 +2,7 @@
 
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '~/utils/ApiError'
+import { boardService } from '~/services/boardService'
 
 const createNew = async (req, res, next) => {
   try {
@@ -13,10 +14,11 @@ const createNew = async (req, res, next) => {
     // console.log('req.cookies', req.cookies)
 
     // điều hướng dữ liệu sang tầng service
-
-    throw new ApiError(StatusCodes.BAD_GATEWAY, 'tanvopy test error')
+    // sử dung await vì bên service là hàm async nên trả về 1 promise
+    const createBoard = await boardService.createNew(req.body)
+    // throw new ApiError(StatusCodes.BAD_GATEWAY, 'tanvopy test error')
     // có kết quả thì trả về phía client
-    // res.status(StatusCodes.CREATED).json({ message: 'Post from controller create new board successfully' })
+    res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) {
     next(error) // gọi middleware xử lý lỗi tập trung nó sẽ đưa về middleware sư lí lỗi ở server.js
     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ errors: error.message })
