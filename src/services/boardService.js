@@ -8,23 +8,33 @@
  */
 
 import { slugify } from '~/utils/formatters'
+import { boardModel } from '~/models/boardModel'
 
 const createNew = async (reqBody) => {
   // eslint-disable-next-line no-useless-catch
   try {
     // xử lí logic dữ liệu
     const newBoard = {
-      ...reqBody,
+      ...reqBody,  // đẩy lên có title, desciption, và tạo thêm cái slug
       slug: slugify(reqBody.title)
     }
 
-    // gọi tới tầng model để sử lí lưu bảng ghi newBoard vào trong database
+    // gọi tới tầng model để sử lí lưu bảng ghi newBoard vào trong databas
+    const createdBoard = await boardModel.createNew(newBoard)
+    console.log('createdBoard', createdBoard)
+
+    // lấy bảng ghi boards sau khi gọi tuỳ mục đích sử dụng
+    // lúc này insertedId bản chất của nó là 1 new ObjectId()
+    const getNewBoard = await boardModel.findOneById(createdBoard.insertedId)
+    console.log('getNewBoard', getNewBoard)
+
     //
     // làm thêm các xử lí logic khác với các Collection khác nếu có
     // bắn email notification cho admin khi có một cái board mới được tạo ra
 
     // trả kết quả về 
-    return newBoard
+    // return createdBoard
+    return getNewBoard
   } catch (error) {
     //
     throw error
