@@ -21,12 +21,12 @@ const createNew = async (reqBody) => {
 
     // gọi tới tầng model để sử lí lưu bảng ghi newBoard vào trong databas
     const createdBoard = await boardModel.createNew(newBoard)
-    console.log('createdBoard', createdBoard)
+    // console.log('createdBoard', createdBoard)
 
     // lấy bảng ghi boards sau khi gọi tuỳ mục đích sử dụng
     // lúc này insertedId bản chất của nó là 1 new ObjectId()
     const getNewBoard = await boardModel.findOneById(createdBoard.insertedId)
-    console.log('getNewBoard', getNewBoard)
+    // console.log('getNewBoard', getNewBoard)
 
     //
     // làm thêm các xử lí logic khác với các Collection khác nếu có
