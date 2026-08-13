@@ -13,4 +13,8 @@ Router.route('/')
   // })
   // bản chất các bước di chuyển của request nằm ở post khi boardValidation đưỢc thông qua nó sẽ dẫn đến boardController
   .post(boardValidation.createNew, boardController.createNew)
+
+Router.route('/:id')
+  .get(boardController.getDetails)
+  .put() // dùng để update
 export const boardRoutes = Router
