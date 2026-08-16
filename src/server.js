@@ -1,6 +1,8 @@
 
 // eslint-disable no-console
 import express from 'express'
+import cors from 'cors'
+import { corsOptions } from '~/config/cors'
 import exitHook from 'async-exit-hook'
 import { env } from '~/config/environment'
 import { CONNECT_DB, GET_DB, CLOSE_DB } from '~/config/mongodb'
@@ -9,6 +11,8 @@ import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 
 const START_SERVER = () => {
   const app = express()
+
+  app.use(cors(corsOptions)) // xử lí cors để cấu hình cors cho server
 
   // phải có 
   app.use(express.json()) // middleware để parse dữ liệu json từ client gửi lên
