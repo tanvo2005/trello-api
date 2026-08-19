@@ -14,7 +14,7 @@ const COLUMN_COLLECTION_SCHEMA = joi.object({
   _destroy: joi.boolean().default(false)
 })
 
-export const ColumnModel = {
+export const columnModel = {
   COLUMN_COLLECTION_NAME,
   COLUMN_COLLECTION_SCHEMA
 }

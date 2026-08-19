@@ -11,6 +11,7 @@ import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '~/utils/ApiError'
+import { cloneDeep } from 'lodash'
 
 const createNew = async (reqBody) => {
   // eslint-disable-next-line no-useless-catch
@@ -50,7 +51,20 @@ const getDetails = async (boardId) => {
     const board = await boardModel.getDetails(boardId)
     // nếu board rổng thì ném ra lỗi không tìm thấy board
     if (!board) throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
-    return board
+
+    // boardModel trả dữ liệu về tâng service 
+    // xử lí dữ liệu trả về cho giống mocdata
+    // coloneDeep board ra một cái mới để xử lí không ảnh hưởng đến board ban đầu
+    const resBoard = cloneDeep(board)
+    // đưa card về đúng column của nó
+    resBoard.columns.forEach(column => {
+      // column.cards = resBoard.cards.filter(card => card.columnId.toString() === column._id.toString()) // so sánh băng phải chuyển về toString() vì card.columnId là ObjectId còn column._id là string nên không so sánh được
+      column.cards = resBoard.cards.filter(card => card.columnId.equals(column._id))
+
+    })
+    // xoá mảng card khỏi board ban đàu 
+    delete resBoard.cards // xóa cái mảng cards đi vì đã đưa về đúng column của nó rồi
+    return resBoard
   } catch (error) { throw error }
 }
 export const boardService = {

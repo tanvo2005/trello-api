@@ -1,6 +1,7 @@
 import joi, { required } from 'joi'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '~/utils/ApiError'
+import { BOARD_TYPE } from '~/utils/constants'
 /**
  * validate là bắc buộc ở phía backend vì đây lad điểm cuối để lưu trữ dữ liệu vào database
  * thông thường trong thực tế luôn validate ở cả 2 phía backend và frontend
@@ -16,6 +17,7 @@ const createNew = async (req, res, next) => {
       'string.trim': 'title cannot have leading or trailing whitespace',
     }),
     description: joi.string().required().min(3).max(256).trim().strict(),
+    type: joi.string().valid(BOARD_TYPE.PUBLIC, BOARD_TYPE.PRIVATE).required(),// chỉ cho phép 2 giá trị là public và private
 
   })
 
